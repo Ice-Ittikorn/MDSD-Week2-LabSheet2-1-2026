@@ -210,6 +210,7 @@ void main() {
 ```
 
 **ขั้นตอนที่ 3** กด **Run** ตรวจสอบผลลัพธ์ที่ได้
+
 ผลลัพท์
 <img width="1106" height="616" alt="image" src="https://github.com/user-attachments/assets/8378cd32-1a82-4d12-afdf-523879a7aa99" />
 
@@ -227,6 +228,7 @@ void main() {
   print("ตัวพิมพ์ใหญ่: ${nickname?.toUpperCase()}"); // → ชาย
 ```
 **ขั้นตอนที่ 5** กด Run อีกครั้ง สังเกตผลลัพธ์ที่เพิ่มขึ้น
+
 ผลลัพท์
 <img width="1094" height="550" alt="image" src="https://github.com/user-attachments/assets/a303c1e7-6dd8-4015-9a0f-2a93e04780ab" />
 
@@ -256,6 +258,7 @@ void main() {
 ```
 
 **ขั้นตอนที่ 7** กด Run และบันทึกผลลัพธ์ทั้งหมด
+
 ผลลัพท์
 <img width="1043" height="547" alt="image" src="https://github.com/user-attachments/assets/5d004027-fbe0-4426-a782-ae2ff4370eb6" />
 
