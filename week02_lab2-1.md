@@ -1064,10 +1064,229 @@ void main() {
 
 **บันทึกผลการทดลอง: บันทึกโค้ดคำสั่งที่ได้**
 ```dart
-// บันทึกโค้ดในส่วนนี้
+class BankAccount {
+  final String ownerName;
+  double _balance;
+  List<String> _history = [];
+
+  BankAccount({required this.ownerName, double initial = 0})
+      : _balance = initial;
+
+  double get balance => _balance;
+  List<String> get history => List.unmodifiable(_history);
+
+  bool deposit(double amount) {
+    if (amount <= 0) {
+      print("จำนวนเงินต้องมากกว่า 0");
+      return false;
+    }
+    _balance += amount;
+    _history.add("+ ฝาก ${amount.toStringAsFixed(2)} บาท (ยอดคงเหลือ: ${_balance.toStringAsFixed(2)})");
+    print("ฝาก ${amount.toStringAsFixed(2)} บาท สำเร็จ");
+    return true;
+  }
+
+  bool withdraw(double amount) {
+    if (amount <= 0) {
+      print("จำนวนเงินต้องมากกว่า 0");
+      return false;
+    }
+    if (amount > _balance) {
+      print("ยอดเงินไม่เพียงพอ (มี ${_balance.toStringAsFixed(2)} บาท)");
+      return false;
+    }
+    _balance -= amount;
+    _history.add("- ถอน ${amount.toStringAsFixed(2)} บาท (ยอดคงเหลือ: ${_balance.toStringAsFixed(2)})");
+    print("ถอน ${amount.toStringAsFixed(2)} บาท สำเร็จ");
+    return true;
+  }
+
+  void printStatement() {
+    print("\nสรุปบัญชี: $ownerName");
+    print("ยอดปัจจุบัน: ${_balance.toStringAsFixed(2)} บาท");
+    print("ประวัติรายการ:");
+    if (_history.isEmpty) {
+      print("  (ยังไม่มีรายการ)");
+    } else {
+      _history.forEach((h) => print("  $h"));
+    }
+  }
+
+  @override
+  String toString() => "BankAccount(${ownerName}, ยอด: ${_balance.toStringAsFixed(2)})";
+}
+
+class SavingsAccount extends BankAccount {
+  final double interestRate; 
+
+  SavingsAccount({
+    required String ownerName,
+    required this.interestRate,
+    double initial = 0,
+  }) : super(ownerName: ownerName, initial: initial);
+
+  @override
+  bool withdraw(double amount) {
+    if (_balance - amount < 500) {
+      print("บัญชีออมทรัพย์ต้องมียอดขั้นต่ำ 500 บาท");
+      return false;
+    }
+    return super.withdraw(amount); 
+  }
+
+  void applyMonthlyInterest() {
+    double interest = _balance * interestRate / 12;
+    _balance += interest;
+    _history.add("+ ดอกเบี้ยรายเดือน ${interest.toStringAsFixed(2)} บาท");
+    print("ดอกเบี้ยเดือนนี้: ${interest.toStringAsFixed(2)} บาท");
+  }
+}
 
 
+class CheckingAccount extends BankAccount {
+  CheckingAccount({required String ownerName, double initial = 0})
+      : super(ownerName: ownerName, initial: initial);
+
+  @override
+  bool withdraw(double amount) {
+    if (amount <= 0) {
+      print("จำนวนเงินต้องมากกว่า 0");
+      return false;
+    }
+    if (amount > _balance + 500) {
+      print("ยอดเงินไม่เพียงพอ");
+      return false;
+    }
+    
+    _balance -= amount;
+    _history.add("- ถอน ${amount.toStringAsFixed(2)} บาท (ยอดคงเหลือ: ${_balance.toStringAsFixed(2)})");
+    print("ถอน ${amount.toStringAsFixed(2)} บาท สำเร็จ");
+    
+    if (_balance < 0) {
+      _balance -= 50;
+      _history.add("- ค่าธรรมเนียม Overdraft 50.00 บาท (ยอดคงเหลือ: ${_balance.toStringAsFixed(2)})");
+      print("หักค่าธรรมเนียม 50.00 บาท");
+    }
+    
+    return true;
+  }
+}
+
+abstract class Vehicle {
+  double fuel = 0;
+
+  double get fuelEfficiency;
+
+  void refuel(double liters) {
+    if (liters > 0) {
+      fuel += liters;
+      print("เติมน้ำมัน ${liters.toStringAsFixed(2)} ลิตร (มีน้ำมันรวม ${fuel.toStringAsFixed(2)} ลิตร)");
+    }
+  }
+
+  void drive(double km) {
+    if (km <= 0) return;
+    double fuelNeeded = km / fuelEfficiency;
+    if (fuelNeeded <= fuel) {
+      fuel -= fuelNeeded;
+      print("ขับรถ ${km.toStringAsFixed(2)} กม. ใช้น้ำมัน ${fuelNeeded.toStringAsFixed(2)} ลิตร (เหลือ ${fuel.toStringAsFixed(2)} ลิตร)");
+    } else {
+      double maxKm = fuel * fuelEfficiency;
+      fuel = 0;
+      print("น้ำมันไม่พอ ขับได้แค่ ${maxKm.toStringAsFixed(2)} กม. (น้ำมันหมด)");
+    }
+  }
+}
+
+class Car extends Vehicle {
+  @override
+  double get fuelEfficiency => 15.0;
+}
+
+class Truck extends Vehicle {
+  @override
+  double get fuelEfficiency => 8.0;
+}
+
+mixin Discountable {
+  double get price;
+  set price(double value);
+
+  void applyDiscount(double percent) {
+    if (percent > 0 && percent <= 100) {
+      double discount = price * (percent / 100);
+      price -= discount;
+      print("ลดราคา $percent% (ลดไป ${discount.toStringAsFixed(2)} บาท) คงเหลือ ${price.toStringAsFixed(2)} บาท");
+    }
+  }
+}
+
+class Product with Discountable {
+  String name;
+  
+  @override
+  double price;
+
+  Product(this.name, this.price);
+}
+
+void main() {
+  print("ทดสอบ BankAccount\n");
+  var acc = BankAccount(ownerName: "สมชาย", initial: 1000);
+
+  acc.deposit(500);
+  acc.withdraw(200);
+  acc.withdraw(2000);
+  acc.withdraw(-100);
+  acc.printStatement();
+
+  print("\nทดสอบ SavingsAccount\n");
+  var savings = SavingsAccount(
+    ownerName: "สมหญิง",
+    interestRate: 0.03,
+    initial: 1000,
+  );
+  savings.deposit(5000);
+  savings.withdraw(5600); 
+  savings.withdraw(3000); 
+  savings.applyMonthlyInterest();
+  savings.printStatement();
+
+  print("\nPolymorphism");
+  List<BankAccount> accounts = [acc, savings];
+  for (var account in accounts) {
+    print(account); 
+  }
+  
+  print("\nทดสอบ CheckingAccount");
+  var checking = CheckingAccount(ownerName: "สมหมาย", initial: 2000);
+  checking.deposit(200);
+  checking.withdraw(1500); 
+  checking.withdraw(200); 
+  checking.printStatement();
+
+  print("\nทดสอบ Vehicle (Car และ Truck)");
+  var car = Car();
+  print("รถยนต์ (อัตราสิ้นเปลือง ${car.fuelEfficiency} กม./ลิตร)");
+  car.refuel(10);
+  car.drive(100);
+  car.drive(100);
+
+  var truck = Truck();
+  print("\nรถบรรทุก (อัตราสิ้นเปลือง ${truck.fuelEfficiency} กม./ลิตร)");
+  truck.refuel(20);
+  truck.drive(100);
+
+  print("\nทดสอบ Mixin Discountable");
+  var product = Product("สมาร์ทโฟน", 25000);
+  print("สินค้า: ${product.name} ราคาเริ่มต้น: ${product.price.toStringAsFixed(2)} บาท");
+  product.applyDiscount(10);
+  product.applyDiscount(5);
+  
+}
 ```
+<img width="1510" height="762" alt="image" src="https://github.com/user-attachments/assets/2aec811e-a218-454a-b901-00a47bf73ec2" />
+
 ---
 
 ## ส่วนที่ 4 — ทฤษฎีและการทดลอง: Async/Await และ Future
