@@ -543,6 +543,11 @@ void main() {
 **ขั้นตอนที่ 2** กด Run สังเกตผลลัพธ์
 
 **ขั้นตอนที่ 3** ทดลองเปลี่ยนค่า `gpa` ในแต่ละ `printStudent()` เพื่อดูว่า Label เปลี่ยนอย่างไร
+```
+GPA เกียรตินิยม รายคนเปลี่ยนตามเกรณที่ตั้งใว้
+GPA เฉลี่ยทั้งชั้น คำนวนใหม่
+```
+<img width="1298" height="685" alt="image" src="https://github.com/user-attachments/assets/269f5f65-df06-45da-aa0a-bbdd2a143718" />
 
 ---
 
