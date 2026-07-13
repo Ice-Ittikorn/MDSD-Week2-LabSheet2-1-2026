@@ -1,4 +1,4 @@
-<img width="1228" height="565" alt="image" src="https://github.com/user-attachments/assets/8bdbf5ed-83cd-44e2-90bf-2bb8e47f7524" /># ใบงานการทดลองที่ 2-1
+ใบงานการทดลองที่ 2-1
 # Dart Programming Fundamentals
 ### วิชา: การพัฒนาซอฟต์แวร์สำหรับอุปกรณ์เคลื่อนที่
 
