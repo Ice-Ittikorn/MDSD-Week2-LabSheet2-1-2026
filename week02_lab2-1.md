@@ -1585,10 +1585,89 @@ void main() async {
 
 **บันทึกผลการทดลอง: บันทึกโค้ดคำสั่งที่ได้**
 ```dart
-// บันทึกโค้ดในส่วนนี้
+import 'dart:async';
 
+Future<double> calculateTax(double income) async {
+  await Future.delayed(Duration(milliseconds: 500));
+  
+  double tax = 0;
+  if (income > 500000) {
+    tax += (income - 500000) * 0.20;
+    income = 500000;
+  }
+  if (income > 300000) {
+    tax += (income - 300000) * 0.10;
+    income = 300000;
+  }
+  if (income > 150000) {
+    tax += (income - 150000) * 0.05;
+  }
+  return tax;
+}
 
+Stream<String> simulateChatMessages() async* {
+  List<String> messages = ["สวัสดี", "สอบถามเรื่องอะไรครับ", "มีปัญหาด้านไหนครับ", "ราคาลงครับ", "รับทราบครับครับ"];
+  for (int i = 0; i < 5; i++) {
+    await Future.delayed(Duration(seconds: 1));
+    yield messages[i];
+  }
+}
+
+// ประกาศ simulateStockPrice เพียงแค่ครั้งเดียว
+Stream<double> simulateStockPrice(String symbol) async* {
+  double price = 100.0;
+  int ticks = 0;
+
+  while (ticks < 5) {
+    await Future.delayed(Duration(milliseconds: 500));
+
+    double change = (ticks % 2 == 0) ? 2.5 : -1.5;
+    price += change;
+    ticks++;
+
+    yield price; 
+  }
+}
+
+void main() async {
+  print("ราคาหุ้น (Stream)");
+  print("Symbol: DART\n");
+
+  double? lastPrice;
+
+  await for (double price in simulateStockPrice("DART")) {
+    String direction = "";
+    if (lastPrice != null) {
+      direction = price > lastPrice! ? "📈 ขึ้น" : "📉 ลง";
+    }
+    print("ราคา: ${price.toStringAsFixed(2)} บาท  $direction");
+    lastPrice = price;
+  }
+
+  print("\nสิ้นสุดการแสดงราคา");
+  
+  print("คำนวณภาษีเงินได้");
+  List<double> incomes = [120000, 450000, 800000];
+  
+  List<double> taxes = await Future.wait(incomes.map((income) => calculateTax(income)));
+  
+  double totalTax = 0;
+  for (int i = 0; i < incomes.length; i++) {
+    print("รายได้: ${incomes[i].toStringAsFixed(2)} บาท -> เสียภาษี: ${taxes[i].toStringAsFixed(2)} บาท");
+    totalTax += taxes[i];
+  }
+  print("รวมภาษีทั้งหมดที่ต้องจ่าย: ${totalTax.toStringAsFixed(2)} บาท\n");
+
+  print("จำลองการส่งข้อความแชท");
+  await for (String message in simulateChatMessages()) {
+    print("Chat Message: $message");
+  }
+  print("สิ้นสุดการส่งข้อความ\n");
+}
 ```
+<img width="1163" height="628" alt="image" src="https://github.com/user-attachments/assets/1853bf54-317a-4436-952b-c95a2a70039a" />
+
+
 ---
 
 
