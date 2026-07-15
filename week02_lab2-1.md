@@ -1153,8 +1153,9 @@ class CheckingAccount extends BankAccount {
       print("จำนวนเงินต้องมากกว่า 0");
       return false;
     }
+    // แก้ไขข้อความแจ้งเตือนเมื่อถอนเงินเกินวงเงิน Overdraft 500 บาท ตรงนี้
     if (amount > _balance + 500) {
-      print("ยอดเงินไม่เพียงพอ");
+      print("การถอดแบบ Overdraft ถอดได้สูงสุดเเค่ 500 บาท");
       return false;
     }
     
@@ -1261,8 +1262,9 @@ void main() {
   print("\nทดสอบ CheckingAccount");
   var checking = CheckingAccount(ownerName: "สมหมาย", initial: 2000);
   checking.deposit(200);
-  checking.withdraw(1500); 
-  checking.withdraw(200); 
+  checking.withdraw(2000); 
+  checking.withdraw(400); 
+  checking.withdraw(1000);
   checking.printStatement();
 
   print("\nทดสอบ Vehicle (Car และ Truck)");
@@ -1282,10 +1284,9 @@ void main() {
   print("สินค้า: ${product.name} ราคาเริ่มต้น: ${product.price.toStringAsFixed(2)} บาท");
   product.applyDiscount(10);
   product.applyDiscount(5);
-  
 }
 ```
-<img width="1510" height="762" alt="image" src="https://github.com/user-attachments/assets/2aec811e-a218-454a-b901-00a47bf73ec2" />
+<img width="1509" height="807" alt="image" src="https://github.com/user-attachments/assets/e7644b44-4837-4a4e-967a-38eccaba3126" />
 
 ---
 
@@ -1613,7 +1614,6 @@ Stream<String> simulateChatMessages() async* {
   }
 }
 
-// ประกาศ simulateStockPrice เพียงแค่ครั้งเดียว
 Stream<double> simulateStockPrice(String symbol) async* {
   double price = 100.0;
   int ticks = 0;
